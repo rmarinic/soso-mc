@@ -28,8 +28,16 @@ const elements = {
     addressBox: document.getElementById('addressBox'),
     playersSection: document.getElementById('playersSection'),
     playersList: document.getElementById('playersList'),
-    playersCount: document.getElementById('playersCount')
+    playersCount: document.getElementById('playersCount'),
+    splashText: document.getElementById('splashText'),
+    lastOnlineItem: document.getElementById('lastOnlineItem'),
+    lastOnline: document.getElementById('lastOnline'),
+    recentlyPlayed: document.getElementById('recentlyPlayed'),
+    recentPlayers: document.getElementById('recentPlayers')
 };
+
+// Splash texts (loaded from file)
+let splashes = [];
 
 // ============================================
 // LOGGING
@@ -137,10 +145,20 @@ async function checkStatus() {
         
         // Fetch players if server is running
         if (data.status === 'running') {
+            // Update last online to now
+            localStorage.setItem('lastOnline', new Date().toISOString());
             fetchPlayers();
         } else {
             hidePlayers();
+            // Show last online time
+            const lastOnline = localStorage.getItem('lastOnline');
+            if (lastOnline) {
+                updateLastOnline(lastOnline);
+            }
         }
+        
+        // Always show recently played
+        showRecentlyPlayed();
         
         return data.status;
         
@@ -163,9 +181,36 @@ async function fetchPlayers() {
         log(`Players: ${data.online}/${data.max} - ${data.players.join(', ') || 'none'}`, 'success');
         updatePlayers(data);
         
+        // Track recently played in localStorage
+        if (data.players && data.players.length > 0) {
+            trackRecentPlayers(data.players);
+        }
+        
     } catch (error) {
         log(`Players fetch failed: ${error.message}`, 'warning');
         hidePlayers();
+    }
+}
+
+function trackRecentPlayers(currentPlayers) {
+    let recent = JSON.parse(localStorage.getItem('recentPlayers') || '[]');
+    
+    // Add current players to the front
+    currentPlayers.forEach(player => {
+        recent = recent.filter(p => p !== player); // Remove duplicates
+        recent.unshift(player); // Add to front
+    });
+    
+    // Keep only last 10
+    recent = recent.slice(0, 10);
+    
+    localStorage.setItem('recentPlayers', JSON.stringify(recent));
+}
+
+function showRecentlyPlayed() {
+    const recent = JSON.parse(localStorage.getItem('recentPlayers') || '[]');
+    if (recent.length > 0) {
+        updateRecentlyPlayed(recent);
     }
 }
 
@@ -285,11 +330,95 @@ function toggleDebug() {
 }
 
 // ============================================
+// SPLASH TEXT
+// ============================================
+async function loadSplashes() {
+    try {
+        const response = await fetch('splashes.txt');
+        const text = await response.text();
+        splashes = text.split('\n').filter(line => line.trim());
+        log(`Loaded ${splashes.length} splash texts`, 'success');
+        showRandomSplash();
+    } catch (error) {
+        log(`Failed to load splashes: ${error.message}`, 'warning');
+    }
+}
+
+function showRandomSplash() {
+    if (splashes.length > 0) {
+        const splash = splashes[Math.floor(Math.random() * splashes.length)];
+        elements.splashText.textContent = splash;
+        elements.splashText.style.animation = 'none';
+        elements.splashText.offsetHeight; // Trigger reflow
+        elements.splashText.style.animation = 'splashPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    }
+}
+
+// Change splash every 30 seconds
+setInterval(showRandomSplash, 30000);
+
+// ============================================
+// COPY SEED
+// ============================================
+function copySeed() {
+    const seed = '-388733565617576344';
+    navigator.clipboard.writeText(seed).then(() => {
+        log('Seed copied to clipboard', 'success');
+        
+        // Show feedback
+        elements.copyFeedback.classList.add('show');
+        setTimeout(() => {
+            elements.copyFeedback.classList.remove('show');
+        }, 1500);
+    });
+}
+
+// ============================================
+// LAST ONLINE & RECENTLY PLAYED
+// ============================================
+function updateLastOnline(timestamp) {
+    if (timestamp) {
+        elements.lastOnlineItem.style.display = 'flex';
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = now - date;
+        
+        let timeAgo;
+        if (diff < 60000) {
+            timeAgo = 'Just now';
+        } else if (diff < 3600000) {
+            timeAgo = `${Math.floor(diff / 60000)}m ago`;
+        } else if (diff < 86400000) {
+            timeAgo = `${Math.floor(diff / 3600000)}h ago`;
+        } else {
+            timeAgo = `${Math.floor(diff / 86400000)}d ago`;
+        }
+        
+        elements.lastOnline.textContent = timeAgo;
+    }
+}
+
+function updateRecentlyPlayed(players) {
+    if (players && players.length > 0) {
+        elements.recentlyPlayed.style.display = 'block';
+        elements.recentPlayers.innerHTML = players.map(name => `
+            <div class="recent-player">
+                <img src="https://mc-heads.net/avatar/${name}/18" alt="${name}">
+                <span>${name}</span>
+            </div>
+        `).join('');
+    }
+}
+
+// ============================================
 // INIT
 // ============================================
 function init() {
     log('Initializing...', 'info');
     log(`API: ${API_URL}`, 'info');
+    
+    // Load splash texts
+    loadSplashes();
     
     // Initial status check
     checkStatus();

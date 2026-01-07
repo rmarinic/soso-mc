@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" type="image/x-icon" href="favicon.png">
 </head>
 <body>
     <!-- Background gradient -->
@@ -19,7 +18,10 @@
         <header class="header">
             <div class="logo">
                 <span class="logo-icon">⛏️</span>
-                <span class="logo-text">SOSO MC</span>
+                <div class="logo-text-wrapper">
+                    <span class="logo-text">SOSO MC</span>
+                    <span class="splash-text" id="splashText"></span>
+                </div>
             </div>
             <div class="status-pill" id="statusPill">
                 <span class="status-dot" id="statusDot"></span>
@@ -75,6 +77,28 @@
                         <span>📍</span>
                         <span>EU Central</span>
                     </div>
+                </div>
+
+                <!-- Server Info -->
+                <div class="server-info">
+                    <div class="info-item">
+                        <span class="info-label">Version</span>
+                        <span class="info-value">Paper 1.21</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Seed</span>
+                        <span class="info-value copyable" onclick="copySeed()">-388733565617576344</span>
+                    </div>
+                    <div class="info-item" id="lastOnlineItem" style="display: none;">
+                        <span class="info-label">Last Online</span>
+                        <span class="info-value" id="lastOnline">-</span>
+                    </div>
+                </div>
+
+                <!-- Recently Played -->
+                <div class="recently-played" id="recentlyPlayed" style="display: none;">
+                    <span class="recent-label">Recently Played</span>
+                    <div class="recent-players" id="recentPlayers"></div>
                 </div>
             </div>
         </div>
