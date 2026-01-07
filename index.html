@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOSO MC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background gradient -->
+    <div class="bg-blobs"></div>
+
+    <main class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">⛏️</span>
+                <span class="logo-text">SOSO MC</span>
+            </div>
+            <div class="status-pill" id="statusPill">
+                <span class="status-dot" id="statusDot"></span>
+                <span class="status-label" id="statusLabel">Checking...</span>
+            </div>
+        </header>
+
+        <!-- Main Card -->
+        <div class="card">
+            <div class="card-content">
+                <!-- Server Address -->
+                <div class="address-box" id="addressBox" onclick="copyAddress()">
+                    <div class="address-label">Server Address</div>
+                    <div class="address-value">
+                        <span id="addressText">soso-mc.duckdns.org:25565</span>
+                        <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </div>
+                    <div class="copy-feedback" id="copyFeedback">Copied!</div>
+                </div>
+
+                <!-- Action Button -->
+                <button class="action-btn" id="actionBtn" onclick="handleAction()">
+                    <span class="btn-content" id="btnContent">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        <span class="btn-text" id="btnText">Start Server</span>
+                    </span>
+                    <span class="btn-loader" id="btnLoader"></span>
+                </button>
+
+                <!-- Players Section -->
+                <div class="players-section" id="playersSection">
+                    <div class="players-header">
+                        <span class="players-label">Players Online</span>
+                        <span class="players-count" id="playersCount">0/20</span>
+                    </div>
+                    <div class="players-list" id="playersList">
+                        <div class="no-players">No players online</div>
+                    </div>
+                </div>
+
+                <!-- Info Row -->
+                <div class="info-row">
+                    <div class="info-chip">
+                        <span>💤</span>
+                        <span>Auto-sleep 10min</span>
+                    </div>
+                    <div class="info-chip">
+                        <span>📍</span>
+                        <span>EU Central</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Panel -->
+        <div class="debug-panel" id="debugPanel">
+            <button class="debug-toggle" onclick="toggleDebug()">
+                <span>Console</span>
+                <svg class="debug-arrow" id="debugArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+            </button>
+            <div class="debug-content" id="debugContent">
+                <div class="debug-logs" id="debugLogs"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
