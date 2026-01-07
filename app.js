@@ -4,7 +4,6 @@
 
 // Configuration
 const API_URL = 'https://mjszw5n7k47fdxxjomkq555kcq0ndmjr.lambda-url.eu-central-1.on.aws/';
-const MC_API_URL = 'http://soso-mc.duckdns.org:8080/';  // Direct MC server API
 const POLL_INTERVAL = 5000;
 const AUTO_REFRESH = 30000;
 
@@ -158,7 +157,7 @@ async function fetchPlayers() {
     log('Fetching players...', 'info');
     
     try {
-        const response = await fetch(MC_API_URL, { timeout: 5000 });
+        const response = await fetch(`${API_URL}?action=players`);
         const data = await response.json();
         
         log(`Players: ${data.online}/${data.max} - ${data.players.join(', ') || 'none'}`, 'success');
